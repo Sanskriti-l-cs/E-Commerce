@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ShopEase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#14213d; --navy-light:#1f2f57; --amber:#fca311; --amber-dark:#e08e00;
+    --bg:#f7f8fb; --surface:#fff; --border:#e6e8f0; --text:#1a1a2e; --muted:#676d82;
+    --success:#2e7d32; --danger:#d64545; --radius:10px;
+    --shadow:0 6px 20px rgba(20,33,61,.1);
+    --font-d:'Poppins',sans-serif; --font-b:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-b);background:var(--bg);color:var(--text)}
+  h1,h2,h3,h4{font-family:var(--font-d);margin:0 0 8px}
+  a{text-decoration:none;color:inherit;cursor:pointer}
+  button{font-family:var(--font-b);cursor:pointer}
+  .container{max-width:1200px;margin:0 auto;padding:0 20px}
+  .hidden{display:none !important}
+
+  /* navbar */
+  .navbar{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
+  .navbar-inner{display:flex;align-items:center;gap:20px;padding:14px 20px;max-width:1200px;margin:0 auto;flex-wrap:wrap}
+  .brand{font-family:var(--font-d);font-weight:700;font-size:22px;color:#fff}
+  .brand span{color:var(--amber)}
+  .search-form{flex:1;display:flex;max-width:560px;order:1}
+  .search-form input{flex:1;padding:10px 14px;border:none;border-radius:var(--radius) 0 0 var(--radius);font-size:14px}
+  .search-form button{background:var(--amber);border:none;padding:0 16px;border-radius:0 var(--radius) var(--radius) 0;color:var(--navy);font-weight:600}
+  .nav-links{display:flex;align-items:center;gap:18px;margin-left:auto;font-size:14px;font-weight:500}
+  .cart-badge{position:relative}
+  .cart-count{position:absolute;top:-8px;right:-14px;background:var(--amber);color:var(--navy);font-size:11px;font-weight:700;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+  .category-bar{background:var(--navy-light);overflow-x:auto}
+  .category-bar-inner{display:flex;gap:6px;padding:8px 20px;max-width:1200px;margin:0 auto}
+  .chip{color:#cdd3e6;padding:6px 14px;border-radius:999px;font-size:13px;white-space:nowrap}
+  .chip:hover{background:rgba(255,255,255,.08)}
+  .chip.active{background:var(--amber);color:var(--navy);font-weight:600}
+
+  /* grid & cards */
+  .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;padding:24px 0 60px}
+  .product-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:.15s}
+  .product-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .product-card img{width:100%;height:170px;object-fit:cover;background:#f0f1f5}
+  .product-card-body{padding:12px 14px 14px;display:flex;flex-direction:column;flex:1}
+  .product-card-body h4{font-size:14px;font-weight:600;line-height:1.35;min-height:38px}
+  .tag{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+  .price{font-family:var(--font-d);font-weight:700;font-size:17px;color:var(--navy);margin:6px 0 10px}
+  .stock.in{color:var(--success);font-size:12px;margin-bottom:8px}
+  .stock.out{color:var(--danger);font-size:12px;margin-bottom:8px}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius);padding:10px 16px;font-size:14px;font-weight:600}
+  .btn-primary{background:var(--amber);color:var(--navy)}
+  .btn-primary:hover{background:var(--amber-dark)}
+  .btn-primary:disabled{background:#e6c185;cursor:not-allowed}
+  .btn-secondary{background:var(--navy);color:#fff}
+  .btn-secondary:hover{background:var(--navy-light)}
+  .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+  .btn-danger{background:#fbe7e7;color:var(--danger)}
+  .btn-block{width:100%}
+  .btn-sm{padding:6px 10px;font-size:13px}
+
+  /* forms */
+  .form-group{margin-bottom:14px}
+  .form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--muted)}
+  .form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:var(--font-b)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:420px;margin:60px auto;box-shadow:0 1px 3px rgba(20,33,61,.08)}
+  .form-error{background:#fbe7e7;color:var(--danger);padding:10px 12px;border-radius:var(--radius);font-size:13px;margin-bottom:14px}
+
+  /* detail */
+  .product-detail{display:grid;grid-template-columns:420px 1fr;gap:40px;padding:32px 0 60px}
+  .product-detail img{width:100%;border-radius:var(--radius);border:1px solid var(--border);object-fit:cover;max-height:420px}
+  .qty{display:flex;align-items:center;gap:10px;margin:16px 0}
+  .qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:16px}
+
+  /* cart */
+  .cart-item{display:grid;grid-template-columns:70px 1fr auto auto;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+  .cart-item img{width:70px;height:70px;object-fit:cover;border-radius:8px}
+  .cart-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;height:fit-content}
+  .summary-row{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px}
+  .summary-row.total{font-weight:700;font-size:17px;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+  .cart-layout{display:grid;grid-template-columns:1fr 320px;gap:30px;padding:30px 0 60px;align-items:start}
+
+  /* admin */
+  .admin-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 60px)}
+  .admin-sidebar{background:var(--navy);color:#fff;padding:24px 0}
+  .admin-sidebar a,.admin-sidebar button{display:block;width:100%;text-align:left;background:none;border:none;color:#cdd3e6;padding:12px 24px;font-size:14px;font-weight:500}
+  .admin-sidebar a.active,.admin-sidebar a:hover,.admin-sidebar button:hover{background:rgba(255,255,255,.08);color:#fff}
+  .admin-content{padding:28px 32px}
+  .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 3px rgba(20,33,61,.08)}
+  th,td{text-align:left;padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border)}
+  th{background:#f0f2f8;color:var(--muted);text-transform:uppercase;font-size:11px}
+  .table-img{width:42px;height:42px;object-fit:cover;border-radius:6px}
+  .pill{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--border)}
+  .pill-Pending{background:#fff3cd;color:#8a6d1c}
+  .pill-Processing{background:#dbe6ff;color:#2a4fa0}
+  .pill-Shipped{background:#e0d9fb;color:#5a35b0}
+  .pill-Delivered{background:#d9f2df;color:var(--success)}
+  .pill-Cancelled{background:#fbe0e0;color:var(--danger)}
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,33,61,.5);display:flex;align-items:center;justify-content:center;z-index:50}
+  .modal{background:#fff;border-radius:var(--radius);padding:28px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto}
+  .empty-state{text-align:center;padding:80px 20px;color:var(--muted)}
+  .footer{background:var(--navy);color:#cdd3e6;text-align:center;padding:24px;font-size:13px;margin-top:40px}
+  .page-title-row{display:flex;justify-content:space-between;align-items:center;padding-top:24px}
+  .img-preview{width:100%;height:140px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px}
+
+  @media (max-width:900px){
+    .product-detail,.cart-layout,.admin-layout{grid-template-columns:1fr}
+    .admin-sidebar{display:flex;overflow-x:auto;padding:10px}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============ MOCK "BACKEND" — everything lives in localStorage ============ */
+const CATEGORIES = ["Electronics", "Fashion", "Home & Kitchen", "Books", "Beauty"];
+const VENDOR = { email: "vendor@example.com", password: "admin123", name: "Demo Vendor" };
+
+const SEED_PRODUCTS = [
+  {id:"p1",name:"Wireless Bluetooth Headphones",description:"Over-ear headphones with noise cancellation and 30hr battery life.",price:2499,stock:25,category:"Electronics",image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600"},
+  {id:"p2",name:"Men's Casual Cotton Shirt",description:"Breathable slim-fit cotton shirt, machine washable.",price:899,stock:40,category:"Fashion",image:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600"},
+  {id:"p3",name:"Non-Stick Cookware Set (5pc)",description:"Durable non-stick cookware set, induction compatible.",price:3199,stock:15,category:"Home & Kitchen",image:"https://images.unsplash.com/photo-1584990347449-a5d9f800a783?w=600"},
+  {id:"p4",name:"Atomic Habits - Paperback",description:"Bestselling book on building good habits and breaking bad ones.",price:399,stock:60,category:"Books",image:"https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600"},
+  {id:"p5",name:"Vitamin C Face Serum",description:"Brightening face serum with hyaluronic acid, 30ml.",price:599,stock:50,category:"Beauty",image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600"},
+  {id:"p6",name:"Smartwatch Fitness Tracker",description:"Heart-rate monitoring, sleep tracking, 7-day battery life.",price:1799,stock:30,category:"Electronics",image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600"}
+];
+
+const db = {
+  get products(){ return JSON.parse(localStorage.getItem("se_products") || "null") || SEED_PRODUCTS; },
+  set products(v){ localStorage.setItem("se_products", JSON.stringify(v)); },
+  get orders(){ return JSON.parse(localStorage.getItem("se_orders") || "[]"); },
+  set orders(v){ localStorage.setItem("se_orders", JSON.stringify(v)); },
+  get cart(){ return JSON.parse(localStorage.getItem("se_cart") || "[]"); },
+  set cart(v){ localStorage.setItem("se_cart", JSON.stringify(v)); },
+  get vendorLoggedIn(){ return localStorage.getItem("se_vendor") === "yes"; },
+  set vendorLoggedIn(v){ v ? localStorage.setItem("se_vendor","yes") : localStorage.removeItem("se_vendor"); }
+};
+if(!localStorage.getItem("se_products")) db.products = SEED_PRODUCTS;
+
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function money(n){ return "₹" + Number(n).toLocaleString("en-IN"); }
+
+/* ============ simple hash-based router ============ */
+function route(){ return location.hash.slice(1) || "/"; }
+function go(path){ location.hash = path; }
+window.addEventListener("hashchange", render);
+
+/* ============ render ============ */
+function render(){
+  const path = route();
+  const app = document.getElementById("app");
+
+  if (path.startsWith("/admin")) { app.innerHTML = renderAdmin(path); attachAdminEvents(path); return; }
+
+  app.innerHTML = `${Navbar()}<div id="page"></div>${Footer()}`;
+  const page = document.getElementById("page");
+
+  if (path === "/") page.innerHTML = Home();
+  else if (path.startsWith("/product/")) page.innerHTML = ProductDetail(path.split("/")[2]);
+  else if (path === "/cart") page.innerHTML = Cart();
+  else if (path === "/checkout") page.innerHTML = Checkout();
+  else if (path.startsWith("/confirmation/")) page.innerHTML = Confirmation(path.split("/")[2]);
+  else page.innerHTML = `<div class="container empty-state"><h3>Page not found</h3></div>`;
+
+  attachGlobalEvents();
+  attachPageEvents(path);
+}
+
+/* ============ shared components ============ */
+function Navbar(){
+  const params = new URLSearchParams(route().split("?")[1] || "");
+  const activeCategory = params.get("category") || "All";
+  const searchTerm = params.get("search") || "";
+  const count = db.cart.reduce((s,i)=>s+i.quantity,0);
+
+  return `
+  <div class="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="#/">Shop<span>Ease</span></a>
+      <form class="search-form" id="searchForm">
+        <input type="text" id="searchInput" placeholder="Search for products, brands and more" value="${escapeHtml(searchTerm)}" />
+        <button type="submit">Search</button>
+      </form>
+      <div class="nav-links">
+        <a href="#/cart" class="cart-badge">Cart ${count>0?`<span class="cart-count">${count}</span>`:""}</a>
+        <a href="#/admin/login">Vendor Login</a>
+      </div>
+    </div>
+    <div class="category-bar"><div class="category-bar-inner">
+      <a href="#/" class="chip ${activeCategory==='All'?'active':''}">All</a>
+      ${CATEGORIES.map(c=>`<a href="#/?category=${encodeURIComponent(c)}" class="chip ${activeCategory===c?'active':''}">${c}</a>`).join("")}
+    </div></div>
+  </div>`;
+}
+function Footer(){ return `<div class="footer">ShopEase — a front-end-only demo (no live backend, data stored in your browser).</div>`; }
+
+function attachGlobalEvents(){
+  const form = document.getElementById("searchForm");
+  if (form) form.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const val = document.getElementById("searchInput").value.trim();
+    go(val ? `/?search=${encodeURIComponent(val)}` : "/");
+  });
+}
+
+/* ============ Home ============ */
+function Home(){
+  const params = new URLSearchParams(route().split("?")[1] || "");
+  const search = (params.get("search")||"").toLowerCase();
+  const category = params.get("category")||"";
+  let products = db.products;
+  if (category) products = products.filter(p=>p.category===category);
+  if (search) products = products.filter(p=>p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search));
+
+  const title = search ? `Results for "${escapeHtml(search)}"` : (category || "Popular right now");
+
+  return `
+  <div class="container">
+    <div class="page-title-row"><h2>${title}</h2></div>
+    ${products.length===0 ? `<div class="empty-state"><h3>No products found</h3><p>Try a different search term or category.</p></div>` : `
+    <div class="product-grid">
+      ${products.map(ProductCard).join("")}
+    </div>`}
+  </div>`;
+}
+function ProductCard(p){
+  return `
+  <a class="product-card" href="#/product/${p.id}">
+    <img src="${p.image}" alt="${escapeHtml(p.name)}" />
+    <div class="product-card-body">
+      <div class="tag">${p.category}</div>
+      <h4>${escapeHtml(p.name)}</h4>
+      <div class="price">${money(p.price)}</div>
+      ${p.stock>0 ? `<div class="stock in">In stock</div>` : `<div class="stock out">Out of stock</div>`}
+    </div>
+  </a>`;
+}
+
+/* ============ Product Detail ============ */
+function ProductDetail(id){
+  const p = db.products.find(x=>x.id===id);
+  if (!p) return `<div class="container empty-state"><h3>Product not found</h3><a href="#/" class="btn btn-primary">Back to shopping</a></div>`;
+  return `
+  <div class="container">
+    <div class="product-detail">
+      <div><img src="${p.image}" alt="${escapeHtml(p.name)}" /></div>
+      <div>
+        <div class="tag">${p.category}</div>
+        <h1>${escapeHtml(p.name)}</h1>
+        <div class="price" style="font-size:26px;margin:12px 0">${money(p.price)}</div>
+        ${p.stock>0 ? `<div class="stock in">In stock (${p.stock} available)</div>` : `<div class="stock out">Out of stock</div>`}
+        <p style="color:var(--muted);line-height:1.6;margin-top:16px">${escapeHtml(p.description)}</p>
+        ${p.stock>0 ? `
+        <div class="qty">
+          <button id="qtyMinus">−</button>
+          <span id="qtyVal">1</span>
+          <button id="qtyPlus">+</button>
+        </div>
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-secondary" id="addBtn" data-id="${p.id}">Add to Cart</button>
+          <button class="btn btn-primary" id="buyBtn" data-id="${p.id}">Buy Now</button>
+        </div>` : ``}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============ Cart ============ */
+function Cart(){
+  const items = db.cart;
+  if (items.length===0) return `<div class="container empty-state"><h3>Your cart is empty</h3><p>Browse our categories and add something you like.</p><a href="#/" class="btn btn-primary">Continue Shopping</a></div>`;
+  const total = items.reduce((s,i)=>s+i.price*i.quantity,0);
+  return `
+  <div class="container">
+    <h2 style="padding-top:24px">Your Cart</h2>
+    <div class="cart-layout">
+      <div>
+        ${items.map(i=>`
+        <div class="cart-item">
+          <img src="${i.image}" alt="${escapeHtml(i.name)}" />
+          <div>
+            <div style="font-weight:600;font-size:14px">${escapeHtml(i.name)}</div>
+            <div style="color:var(--muted);font-size:13px">${money(i.price)} each</div>
+          </div>
+          <div class="qty" style="margin:0">
+            <button class="cartMinus" data-id="${i.productId}">−</button>
+            <span>${i.quantity}</span>
+            <button class="cartPlus" data-id="${i.productId}">+</button>
+          </div>
+          <button class="btn btn-danger btn-sm cartRemove" data-id="${i.productId}">Remove</button>
+        </div>`).join("")}
+      </div>
+      <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <div class="summary-row"><span>Items</span><span>${items.reduce((s,i)=>s+i.quantity,0)}</span></div>
+        <div class="summary-row"><span>Delivery</span><span>Free</span></div>
+        <div class="summary-row total"><span>Total</span><span>${money(total)}</span></div>
+        <button class="btn btn-primary btn-block" id="checkoutBtn">Proceed to Checkout</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============ Checkout ============ */
+function Checkout(){
+  const items = db.cart;
+  if (items.length===0){ go("/cart"); return ""; }
+  const total = items.reduce((s,i)=>s+i.price*i.quantity,0);
+  return `
+  <div class="container">
+    <div class="form-card">
+      <h2>Checkout</h2>
+      <div id="checkoutError"></div>
+      <form id="checkoutForm">
+        <div class="form-group"><label>Full Name</label><input name="customerName" required /></div>
+        <div class="form-group"><label>Phone Number</label><input name="phone" required /></div>
+        <div class="form-group"><label>Delivery Address</label><textarea name="address" required></textarea></div>
+        <div class="summary-row total" style="margin-bottom:16px"><span>Total to pay</span><span>${money(total)}</span></div>
+        <button class="btn btn-primary btn-block">Place Order (Cash on Delivery)</button>
+      </form>
+    </div>
+  </div>`;
+}
+
+/* ============ Confirmation ============ */
+function Confirmation(id){
+  const order = db.orders.find(o=>o.id===id);
+  if(!order) return `<div class="container empty-state"><h3>Order not found</h3></div>`;
+  return `
+  <div class="container">
+    <div class="form-card" style="text-align:center">
+      <h2 style="color:var(--success)">Order Placed! 🎉</h2>
+      <p style="color:var(--muted)">Order ID: <strong>${order.id}</strong></p>
+      <div style="text-align:left;margin-top:20px">
+        ${order.items.map(i=>`<div class="summary-row"><span>${escapeHtml(i.name)} × ${i.quantity}</span><span>${money(i.price*i.quantity)}</span></div>`).join("")}
+        <div class="summary-row total"><span>Total</span><span>${money(order.total)}</span></div>
+      </div>
+      <a href="#/" class="btn btn-primary" style="margin-top:20px;display:inline-flex">Continue Shopping</a>
+    </div>
+  </div>`;
+}
+
+/* ============ page-level event wiring ============ */
+function attachPageEvents(path){
+  if (path.startsWith("/product/")){
+    const id = path.split("/")[2];
+    let qty = 1;
+    const qtyVal = document.getElementById("qtyVal");
+    document.getElementById("qtyPlus")?.addEventListener("click", ()=>{ qty++; qtyVal.textContent = qty; });
+    document.getElementById("qtyMinus")?.addEventListener("click", ()=>{ qty=Math.max(1,qty-1); qtyVal.textContent = qty; });
+    document.getElementById("addBtn")?.addEventListener("click", (e)=>{ addToCart(id, qty); e.target.textContent="Added ✓"; });
+    document.getElementById("buyBtn")?.addEventListener("click", ()=>{ addToCart(id, qty); go("/cart"); });
+  }
+  if (path === "/cart"){
+    document.querySelectorAll(".cartPlus").forEach(b=>b.addEventListener("click",()=>changeQty(b.dataset.id,1)));
+    document.querySelectorAll(".cartMinus").forEach(b=>b.addEventListener("click",()=>changeQty(b.dataset.id,-1)));
+    document.querySelectorAll(".cartRemove").forEach(b=>b.addEventListener("click",()=>{ db.cart = db.cart.filter(i=>i.productId!==b.dataset.id); render(); }));
+    document.getElementById("checkoutBtn")?.addEventListener("click", ()=>go("/checkout"));
+  }
+  if (path === "/checkout"){
+    document.getElementById("checkoutForm")?.addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const items = db.cart;
+      const products = db.products;
+      // validate stock
+      for (const i of items){
+        const p = products.find(pp=>pp.id===i.productId);
+        if (!p || p.stock < i.quantity){
+          document.getElementById("checkoutError").innerHTML = `<div class="form-error">Not enough stock for ${p?p.name:"an item"}.</div>`;
+          return;
+        }
+      }
+      // deduct stock
+      items.forEach(i=>{ const p = products.find(pp=>pp.id===i.productId); p.stock -= i.quantity; });
+      db.products = products;
+
+      const order = {
+        id: uid(),
+        customerName: fd.get("customerName"),
+        phone: fd.get("phone"),
+        address: fd.get("address"),
+        items: items.map(i=>({productId:i.productId,name:i.name,price:i.price,quantity:i.quantity})),
+        total: items.reduce((s,i)=>s+i.price*i.quantity,0),
+        status: "Pending",
+        createdAt: new Date().toISOString()
+      };
+      db.orders = [order, ...db.orders];
+      db.cart = [];
+      go(`/confirmation/${order.id}`);
+    });
+  }
+}
+
+function addToCart(productId, qty){
+  const p = db.products.find(x=>x.id===productId);
+  if (!p) return;
+  const cart = db.cart;
+  const existing = cart.find(i=>i.productId===productId);
+  if (existing) existing.quantity += qty;
+  else cart.push({productId:p.id,name:p.name,price:p.price,image:p.image,quantity:qty});
+  db.cart = cart;
+  render();
+}
+function changeQty(productId, delta){
+  let cart = db.cart;
+  const item = cart.find(i=>i.productId===productId);
+  if (!item) return;
+  item.quantity += delta;
+  if (item.quantity <= 0) cart = cart.filter(i=>i.productId!==productId);
+  db.cart = cart;
+  render();
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+/* ============ ADMIN ============ */
+function renderAdmin(path){
+  if (path === "/admin/login" || !db.vendorLoggedIn){
+    return AdminLogin();
+  }
+  if (path === "/admin/orders") return AdminShell("orders");
+  return AdminShell("dashboard");
+}
+
+function AdminLogin(){
+  return `
+  <div class="navbar"><div class="navbar-inner"><a class="brand" href="#/">Shop<span>Ease</span></a></div></div>
+  <div class="container">
+    <div class="form-card">
+      <h2>Vendor Login</h2>
+      <p style="color:var(--muted);font-size:13px;margin-top:-8px;margin-bottom:16px">Demo account: vendor@example.com / admin123</p>
+      <div id="loginError"></div>
+      <form id="loginForm">
+        <div class="form-group"><label>Email</label><input type="email" name="email" value="vendor@example.com" required /></div>
+        <div class="form-group"><label>Password</label><input type="password" name="password" required /></div>
+        <button class="btn btn-primary btn-block">Sign In</button>
+      </form>
+    </div>
+  </div>`;
+}
+
+function AdminShell(activeTab){
+  return `
+  <div class="navbar"><div class="navbar-inner"><a class="brand" href="#/">Shop<span>Ease</span></a>
+    <div class="nav-links"><a href="#/">View Storefront</a></div>
+  </div></div>
+  <div class="admin-layout">
+    <div class="admin-sidebar">
+      <div style="padding:0 24px 16px;font-weight:600">${VENDOR.name}</div>
+      <a href="#/admin/dashboard" class="${activeTab==='dashboard'?'active':''}">Products</a>
+      <a href="#/admin/orders" class="${activeTab==='orders'?'active':''}">Orders</a>
+      <button id="logoutBtn">Log Out</button>
+    </div>
+    <div class="admin-content" id="adminContent">
+      ${activeTab==='orders' ? AdminOrders() : AdminDashboard()}
+    </div>
+  </div>`;
+}
+
+function AdminDashboard(){
+  const products = db.products;
+  return `
+  <div class="admin-header"><h2>Products</h2><button class="btn btn-primary" id="addProductBtn">+ Add Product</button></div>
+  ${products.length===0 ? `<div class="empty-state"><h3>No products yet</h3></div>` : `
+  <table>
+    <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+    <tbody>
+      ${products.map(p=>`
+      <tr>
+        <td><img src="${p.image}" class="table-img" /></td>
+        <td>${escapeHtml(p.name)}</td>
+        <td>${p.category}</td>
+        <td>${money(p.price)}</td>
+        <td>${p.stock}</td>
+        <td><div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm editBtn" data-id="${p.id}">Edit</button>
+          <button class="btn btn-danger btn-sm deleteBtn" data-id="${p.id}">Delete</button>
+        </div></td>
+      </tr>`).join("")}
+    </tbody>
+  </table>`}
+  <div id="modalHost"></div>`;
+}
+
+function AdminOrders(){
+  const orders = db.orders;
+  const STATUSES = ["Pending","Processing","Shipped","Delivered","Cancelled"];
+  return `
+  <div class="admin-header"><h2>Orders</h2></div>
+  ${orders.length===0 ? `<div class="empty-state"><h3>No orders yet</h3><p>Orders placed by customers will show up here.</p></div>` : `
+  <table>
+    <thead><tr><th>Customer</th><th>Items</th><th>Address</th><th>Total</th><th>Status</th><th>Placed</th></tr></thead>
+    <tbody>
+      ${orders.map(o=>`
+      <tr>
+        <td>${escapeHtml(o.customerName)}<br><span style="color:var(--muted)">${escapeHtml(o.phone)}</span></td>
+        <td>${o.items.map(i=>`<div>${escapeHtml(i.name)} × ${i.quantity}</div>`).join("")}</td>
+        <td style="max-width:200px">${escapeHtml(o.address)}</td>
+        <td>${money(o.total)}</td>
+        <td><select class="statusSelect pill pill-${o.status}" data-id="${o.id}" style="border:none;font-family:inherit">
+          ${STATUSES.map(s=>`<option value="${s}" ${s===o.status?"selected":""}>${s}</option>`).join("")}
+        </select></td>
+        <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+      </tr>`).join("")}
+    </tbody>
+  </table>`}`;
+}
+
+function ProductFormModal(product){
+  const isEdit = !!product;
+  const p = product || {name:"",description:"",price:"",stock:"",category:CATEGORIES[0],image:""};
+  return `
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalBox">
+      <h3>${isEdit?"Edit Product":"Add New Product"}</h3>
+      <div id="formError"></div>
+      <form id="productForm">
+        <div class="form-group"><label>Product Name</label><input name="name" value="${escapeHtml(p.name)}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description">${escapeHtml(p.description)}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Price (₹)</label><input type="number" name="price" min="0" step="0.01" value="${p.price}" required /></div>
+          <div class="form-group"><label>Stock</label><input type="number" name="stock" min="0" value="${p.stock}" required /></div>
+        </div>
+        <div class="form-group"><label>Category</label>
+          <select name="category">${CATEGORIES.map(c=>`<option value="${c}" ${c===p.category?"selected":""}>${c}</option>`).join("")}</select>
+        </div>
+        <div class="form-group"><label>Image URL</label>
+          ${p.image?`<img src="${p.image}" class="img-preview" id="imgPreview"/>`:`<img src="" class="img-preview hidden" id="imgPreview"/>`}
+          <input name="image" id="imageInput" placeholder="https://..." value="${escapeHtml(p.image)}" />
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Paste an image link (no file upload in this offline demo).</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button type="button" class="btn btn-outline" id="modalCancel">Cancel</button>
+          <button class="btn btn-primary">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+}
+
+function attachAdminEvents(path){
+  // login page
+  document.getElementById("loginForm")?.addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    if (fd.get("email")===VENDOR.email && fd.get("password")===VENDOR.password){
+      db.vendorLoggedIn = true;
+      go("/admin/dashboard");
+    } else {
+      document.getElementById("loginError").innerHTML = `<div class="form-error">Invalid email or password.</div>`;
+    }
+  });
+
+  document.getElementById("logoutBtn")?.addEventListener("click", ()=>{ db.vendorLoggedIn=false; go("/admin/login"); });
+
+  // dashboard
+  document.getElementById("addProductBtn")?.addEventListener("click", ()=>openProductModal(null));
+  document.querySelectorAll(".editBtn").forEach(b=>b.addEventListener("click",()=>{
+    const p = db.products.find(x=>x.id===b.dataset.id);
+    openProductModal(p);
+  }));
+  document.querySelectorAll(".deleteBtn").forEach(b=>b.addEventListener("click",()=>{
+    if (!confirm("Delete this product? This cannot be undone.")) return;
+    db.products = db.products.filter(p=>p.id!==b.dataset.id);
+    render();
+  }));
+
+  // orders
+  document.querySelectorAll(".statusSelect").forEach(sel=>sel.addEventListener("change",()=>{
+    const orders = db.orders;
+    const o = orders.find(x=>x.id===sel.dataset.id);
+    if (o) o.status = sel.value;
+    db.orders = orders;
+    render();
+  }));
+}
+
+function openProductModal(product){
+  const host = document.getElementById("modalHost");
+  if (!host) return;
+  host.innerHTML = ProductFormModal(product);
+
+  document.getElementById("modalCancel").addEventListener("click", ()=>{ host.innerHTML=""; });
+  document.getElementById("modalOverlay").addEventListener("click",(e)=>{ if(e.target.id==="modalOverlay") host.innerHTML=""; });
+  document.getElementById("imageInput").addEventListener("input",(e)=>{
+    const img = document.getElementById("imgPreview");
+    img.src = e.target.value;
+    img.classList.toggle("hidden", !e.target.value);
+  });
+
+  document.getElementById("productForm").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const data = {
+      name: fd.get("name"),
+      description: fd.get("description"),
+      price: Number(fd.get("price")),
+      stock: Number(fd.get("stock")),
+      category: fd.get("category"),
+      image: fd.get("image") || "https://via.placeholder.com/400x400?text=No+Image"
+    };
+    let products = db.products;
+    if (product){
+      const idx = products.findIndex(p=>p.id===product.id);
+      products[idx] = {...products[idx], ...data};
+    } else {
+      products.push({id: uid(), ...data});
+    }
+    db.products = products;
+    host.innerHTML = "";
+    render();
+  });
+}
+
+render();
+</script>
+</body>
+</html>
